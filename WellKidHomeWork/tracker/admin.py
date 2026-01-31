@@ -32,8 +32,6 @@ class StudentAdmin(admin.ModelAdmin):
     
     list_editable = ('last_lesson', 'last_homework_lesson')
     
-    # Вариант 1: Убрать ВСЕ ссылки на объекты
-    list_display_links = None
     
     # Вариант 2: Если нужно оставить имя как ссылку, но убрать остальное
     # list_display_links = ('full_name_column',)

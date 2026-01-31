@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from text_format import printf
+
 class Lesson(models.Model):
     """Модель урока"""
     module = models.PositiveIntegerField(verbose_name='Модуль')
@@ -13,11 +15,11 @@ class Lesson(models.Model):
         verbose_name_plural = "Уроки"
     
     def __str__(self):
-        return f'М{self.module}У{self.lesson}'
+        return f'М{self.module}У{self.lesson} (Урок {(self.module - 1) * 4 + self.lesson})'
     
     @property
     def code(self):
-        return f'М{self.module}У{self.lesson}'
+        return f'М{self.module}У{self.lesson} ({(self.module - 1) * 4 + self.lesson})'
 
 class Student(models.Model):
     """Модель ученика"""
@@ -74,17 +76,17 @@ class Student(models.Model):
     @property
     def full_name(self):
         """Полное имя для отображения в админке"""
-        return f'{self.last_name} {self.first_name}'
+        return f'{self.first_name} {self.last_name}'
     
     @property
     def lessons_behind(self):
         """Вычисляет, на сколько уроков отстаёт ученик"""
         if not self.last_lesson or not self.last_homework_lesson:
-            return None
+            return ((self.last_lesson.module-1) * 4) + self.last_lesson.lesson
         
         # Вычисляем порядковый номер уроков
-        last_lesson_num = (self.last_lesson.module - 1) * 100 + self.last_lesson.lesson
-        last_hw_lesson_num = (self.last_homework_lesson.module - 1) * 100 + self.last_homework_lesson.lesson
+        last_lesson_num = ((self.last_lesson.module-1) * 4) + self.last_lesson.lesson
+        last_hw_lesson_num = ((self.last_homework_lesson.module - 1) * 4) + self.last_homework_lesson.lesson
         
         return last_lesson_num - last_hw_lesson_num
     
